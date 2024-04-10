@@ -1,14 +1,13 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-class MainMenu:
+class InlineMenu:
 
     def __init__(self):
         self.kb = InlineKeyboardBuilder()
-        self.items = {}
 
-    def place(self):
-        for item, callback in self.items.items():
+    def place(self, **kwargs):
+        for item, callback in kwargs.items():
             self.kb.button(
                 text=item,
                 callback_data=callback,
