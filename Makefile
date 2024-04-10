@@ -1,2 +1,2 @@
 bot:
-	uvicorn bot.app:app --reload
+		uvicorn bot.app:app --reload
