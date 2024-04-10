@@ -2,4 +2,4 @@ from aiogram.fsm.state import StatesGroup, State
 
 
 class AskStates(StatesGroup):
-    WaitingForQuestion = State()
+    dialogue = State()

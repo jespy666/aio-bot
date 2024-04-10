@@ -1,32 +1,53 @@
 from aiogram.filters import Command
-from aiogram import types, Router
+from aiogram import types, Router, F
+from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from openai import OpenAI
-
-from config import config
 from bot.states import AskStates
+from bot.keyboards.cancel_kb import CancelKB
+from bot.keyboards.inline_menu import InlineMenu
+from ai.text import DialogueManager
 
 
 gpt_router = Router()
-client = OpenAI(api_key=config.OPENAI_KEY)
 
 
 @gpt_router.message(Command('ask'))
 async def ask(message: types.Message, state: FSMContext) -> None:
-    await message.answer('🔽 Задайте мне вопрос 🔽')
-    await state.set_state(AskStates.WaitingForQuestion)
+    dialogue = DialogueManager()
+    cancel_kb = CancelKB().place()
+    await state.update_data(dialogue=dialogue)
+    greeting = dialogue.get_greeting()
+    await message.answer(greeting, reply_markup=cancel_kb)
+    await state.set_state(AskStates.dialogue)
 
 
-async def process_question(message: types.Message, state: FSMContext):
+@gpt_router.message(AskStates.dialogue)
+async def continue_dialogue(message: types.Message, state: FSMContext) -> None:
+    context = await state.get_data()
+    dialogue: DialogueManager = context.get('dialogue')
+    cancel_kb = CancelKB().place()
     question = message.text
-    response = client.chat.completions.create(
-        model=config.GPT_MODEL,
-        messages=[
-            {"role": "user", "content": question},
-        ]
-    )
-    answer = response.choices[0].message
-    print(answer)
-    await message.answer(str(answer))
+    dialogue.add_user_message(question)
+    answer = dialogue.get_ai_response()
+    await message.answer(answer, reply_markup=cancel_kb)
+    await state.update_data(dialogue=dialogue)
+    await state.set_state(AskStates.dialogue)
+
+
+@gpt_router.callback_query(F.data == 'cancel')
+async def cancel_callback(call: CallbackQuery, state: FSMContext):
+    items = {
+        'О боте': 'about',
+        'Главная': 'start',
+        'Начать новый диалог': 'ask',
+    }
+    menu = InlineMenu()
+    goodbye_msg = DialogueManager().get_goodbye()
+    await call.message.answer(goodbye_msg, reply_markup=menu.place(**items))
     await state.clear()
+
+
+@gpt_router.callback_query(F.data == 'ask')
+async def ask_callback(call: CallbackQuery, state: FSMContext) -> None:
+    await ask(call.message, state)
