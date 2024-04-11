@@ -3,6 +3,13 @@ import os
 
 load_dotenv()
 
+# db settings
+match os.getenv('DATABASE'):
+    case db if db == 'sqlite':
+        DATABASE_URL = 'sqlite+aiosqlite:///dev.db'
+    case _:
+        pass
+
 # tg bot related settings
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 WEBHOOK_URL = os.getenv('WEBHOOK_URL')
