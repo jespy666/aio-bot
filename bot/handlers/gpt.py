@@ -1,6 +1,6 @@
 from aiogram.filters import Command
-from aiogram import types, Router, F
-from aiogram.types import CallbackQuery
+from aiogram import Router, F
+from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
 from bot.states import AskStates
@@ -8,14 +8,19 @@ from bot.keyboards.cancel_kb import CancelKB
 from bot.keyboards.inline_menu import InlineMenu
 from ai.text import DialogueManager
 
+from crud import UserCRUD
+from config import config
+
 
 gpt_router = Router()
 
 
 @gpt_router.message(Command('ask'))
-async def ask(message: types.Message, state: FSMContext) -> None:
+async def ask(message: Message, state: FSMContext) -> None:
     dialogue = DialogueManager()
     cancel_kb = CancelKB().place()
+    session = UserCRUD(config.DATABASE_URL)
+    await session.create_user(message.chat.first_name, message.chat.id)
     await state.update_data(dialogue=dialogue)
     greeting = dialogue.get_greeting()
     await message.answer(greeting, reply_markup=cancel_kb)
@@ -23,7 +28,7 @@ async def ask(message: types.Message, state: FSMContext) -> None:
 
 
 @gpt_router.message(AskStates.dialogue)
-async def continue_dialogue(message: types.Message, state: FSMContext) -> None:
+async def continue_dialogue(message: Message, state: FSMContext) -> None:
     context = await state.get_data()
     dialogue: DialogueManager = context.get('dialogue')
     cancel_kb = CancelKB().place()
