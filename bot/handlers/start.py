@@ -9,6 +9,7 @@ start_router = Router()
 items = {
     'О боте': 'about',
     'Начать диалог': 'ask',
+    'Посмотреть баланс': 'balance',
 }
 
 

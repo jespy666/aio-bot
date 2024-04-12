@@ -23,3 +23,11 @@ class UserCRUD:
             user = User(id=pk, name=name)
             session.add(user)
             await session.commit()
+
+    async def get_user(self, pk: int) -> User:
+        async with self.async_session() as session:
+            async with session.begin():
+                stmt = select(User).filter(User.id == pk)
+                response = await session.execute(stmt)
+                user = response.first()
+                return user[0]
