@@ -9,6 +9,8 @@ from bot.keyboards.inline_menu import InlineMenu
 from ai.text import DialogueManager
 
 from crud import UserCRUD
+from pricing.bill import TextBill
+from ..wrappers.balance_control import balance_control
 from config import config
 
 
@@ -16,11 +18,10 @@ gpt_router = Router()
 
 
 @gpt_router.message(Command('ask'))
+@balance_control
 async def ask(message: Message, state: FSMContext) -> None:
     dialogue = DialogueManager()
     cancel_kb = CancelKB().place()
-    session = UserCRUD(config.DATABASE_URL)
-    await session.create_user(message.chat.first_name, message.chat.id)
     await state.update_data(dialogue=dialogue)
     greeting = dialogue.get_greeting()
     await message.answer(greeting, reply_markup=cancel_kb)
