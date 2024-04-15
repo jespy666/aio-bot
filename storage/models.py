@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Numeric
+from sqlalchemy import Column, String, Integer, Float
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -9,7 +9,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     balance = Column(
-        Numeric(10, 2),
+        Float,
         default=0.00,
         nullable=False
     )
