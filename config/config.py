@@ -17,4 +17,5 @@ WEBHOOK_PATH = os.getenv('WEBHOOK_PATH')
 
 # OpenAI related settings
 GPT_MODEL = os.getenv('GPT_MODEL')
+IMAGE_MODEL = os.getenv('IMAGE_MODEL')
 OPENAI_KEY = os.getenv('OPENAI_API_KEY')
