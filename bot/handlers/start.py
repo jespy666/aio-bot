@@ -2,6 +2,7 @@ from aiogram.filters import Command
 from aiogram import types, Router, F
 
 from bot.keyboards.inline_menu import InlineMenu
+from ..wrappers import check_user
 
 
 start_router = Router()
@@ -14,6 +15,7 @@ items = {
 
 
 @start_router.message(Command('start'))
+@check_user
 async def start(message: types.Message):
     menu = InlineMenu()
     await message.answer(
