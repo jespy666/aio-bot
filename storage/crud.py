@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from storage.models import User
 
@@ -31,3 +31,12 @@ class UserCRUD:
                 response = await session.execute(stmt)
                 user = response.first()
                 return user[0]
+
+    async def set_balance(self, pk: int, net_balance: float) -> None:
+        async with self.async_session() as session:
+            async with session.begin():
+                stmt = update(User).where(User.id == pk).values(
+                    balance=net_balance
+                )
+                await session.execute(stmt)
+                await session.commit()
