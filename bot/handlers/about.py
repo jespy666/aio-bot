@@ -1,7 +1,7 @@
 from aiogram.filters import Command
 from aiogram import types, Router, F
 
-from bot.keyboards.inline_menu import InlineMenu
+from bot.keyboards import InlineMenu
 
 about_router = Router()
 

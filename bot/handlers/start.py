@@ -1,7 +1,7 @@
 from aiogram.filters import Command
 from aiogram import types, Router, F
 
-from bot.keyboards.inline_menu import InlineMenu
+from bot.keyboards import InlineMenu
 from ..wrappers import check_user
 
 
@@ -16,7 +16,7 @@ items = {
 
 @start_router.message(Command('start'))
 @check_user
-async def start(message: types.Message):
+async def start(message: types.Message, **kwargs):
     menu = InlineMenu()
     await message.answer(
         f'Привет, {message.from_user.first_name},\n\n'

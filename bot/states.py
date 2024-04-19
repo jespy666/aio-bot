@@ -1,5 +1,6 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class AskStates(StatesGroup):
-    dialogue = State()
+class TextDialogueStates(StatesGroup):
+    choseModel = State()
+    supportDialogue = State()
