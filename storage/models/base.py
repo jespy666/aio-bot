@@ -7,6 +7,7 @@ from sqlalchemy.orm import (
 
 
 class Base(DeclarativeBase):
+
     __abstract__ = True
 
     @declared_attr.directive

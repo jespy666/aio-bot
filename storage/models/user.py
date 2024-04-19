@@ -1,8 +1,7 @@
-from sqlalchemy import String, Boolean
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Boolean, Integer
+from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
-from .balance import Balance
 
 
 class User(Base):
@@ -11,11 +10,18 @@ class User(Base):
     pre_subscription: Mapped[bool] = mapped_column(
         Boolean, unique=False, default=False
     )
-    balance: Mapped['Balance'] = relationship(back_populates='user')
+    gpt3_requests: Mapped[int] = mapped_column(
+        Integer, unique=False, default=50
+    )
+    gpt4_requests: Mapped[int] = mapped_column(
+        Integer, unique=False, default=0
+    )
+    image_requests: Mapped[int] = mapped_column(
+        Integer, unique=False, default=0
+    )
 
     def __str__(self):
-        return (f"{self.__class__.__name__}(id={self.id},"
-                f" username={self.name!r})")
+        return f"{self.__class__.__name__}(id={self.id}, name={self.name!r})"
 
     def __repr__(self):
         return str(self)
