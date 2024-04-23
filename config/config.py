@@ -22,6 +22,7 @@ OPENAI_KEY = os.getenv('OPENAI_API_KEY')
 GPT_MODELS = {
     'GPT 3.5 Turbo': ('gpt-3.5-turbo', 'gpt3_requests'),
     'GPT 4': ('gpt-4', 'gpt4_requests'),
+    'DALL-E 3': ('dall-e-3', 'image_requests'),
 }
 
 DEFAULT_GPT_MODEL = 'GPT 3.5 Turbo'
