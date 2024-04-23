@@ -1,24 +1,34 @@
+# from io import BytesIO
+#
 # from openai import OpenAI
+# import base64
+# from PIL import Image
+#
+# # from .dialogue import DialogueBase
+#
+#
 # from config import config
-# #
-# #
+#
+#
 # client = OpenAI(api_key=config.OPENAI_KEY)
-#
-# response = client.chat.completions.create(
-#     model=config.GPT_MODEL,
-#     messages=[
-#         {'role': 'user', 'content': 'сколько будет 2+2?'}
-#     ]
-# )
-# print(response.choices[0].message.content)
-
+# #
+# #
 # response = client.images.generate(
-#   model="dall-e-3",
-#   prompt="autistic wife",
-#   size="1024x1024",
-#   quality="standard",
-#   n=1,
+#       model="dall-e-2",
+#       prompt="Красивый логотип нейросети",
+#       size="256x256",
+#       quality="standard",
+#       response_format='b64_json',
+#       n=1,
 # )
+# #
+# # image_url = response.data[0].url
+# # print(image_url)
 #
-# image_url = response.data[0].url
-# print(image_url)
+# image_data = base64.b64decode(response.data[0].url)
+# image = Image.open(BytesIO(image_data))
+# print(image)
+#
+#
+# # class ImageDialogue(DialogueBase):
+# #     pass
