@@ -22,11 +22,13 @@ class DialogueKB:
     def __init__(self, buttons: list):
         self.buttons = [[KeyboardButton(text=button) for button in buttons]]
 
-    def place(self) -> ReplyKeyboardMarkup:
+    def place(self, placeholder=None) -> ReplyKeyboardMarkup:
         return ReplyKeyboardMarkup(
             keyboard=self.buttons,
+            is_persistent=False,
             one_time_keyboard=True,
             resize_keyboard=True,
+            input_field_placeholder=placeholder,
         )
 
 
