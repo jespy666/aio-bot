@@ -1,36 +1,12 @@
 from functools import wraps
+
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from storage import crud
-from storage.models import User
-from storage.session import Session
-
 from bot import exceptions as e
 from bot.keyboards import InlineMenu
+
 from .states import TextDialogueStates
-
-
-def check_user(with_kwargs=False):
-    def decorator(func):
-        @wraps(func)
-        async def wrapper(message: Message, *args, **kwargs):
-            user_id = message.chat.id
-            first_name = message.chat.first_name
-            session = await Session().get_session()
-            try:
-                user: User = await crud.get_user(session, user_id)
-                # create user if not exist
-                if not user:
-                    await crud.create_user(session, first_name, user_id)
-                if with_kwargs:
-                    return await func(message, session=session, user=user,
-                                      *args, **kwargs)
-                return await func(message, *args, **kwargs)
-            finally:
-                await session.flush()
-        return wrapper
-    return decorator
 
 
 def validators(func):
@@ -52,7 +28,7 @@ def validators(func):
             await message.answer(msg, reply_markup=cancel_btn)
             await message.answer(msg2, reply_markup=models_kb)
             await state.set_state(TextDialogueStates.choseModel)
-        except e.EmptyRequestsError:
+        except e.InsufficientFundsError:
             menu = InlineMenu().place(
                 **{
                     'Докупить запросы': 'buy',
