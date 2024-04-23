@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from aiogram import Bot, Dispatcher, types
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from bot.handlers import register_routes
+from bot.handlers import register_routes, register_middlewares
 from config import config
 
 
@@ -32,6 +32,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 register_routes(dp)
+register_middlewares(dp)
 
 
 @app.post(WEBHOOK_PATH)
