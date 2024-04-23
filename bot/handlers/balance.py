@@ -2,12 +2,11 @@ from aiogram.filters import Command
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from bot.keyboards import InlineMenu
 
 from storage.models import User
-
-from ..wrappers import check_user
-
 
 balance_router = Router()
 
@@ -19,9 +18,7 @@ ITEMS = {
 
 
 @balance_router.message(Command('balance'))
-@check_user(with_kwargs=True)
-async def show_balance(message: Message, **kwargs) -> None:
-    user: User = kwargs.get('user')
+async def show_balance(message: Message, user: User) -> None:
     menu = InlineMenu().place(**ITEMS)
     is_premium = user.pre_subscription
     status = 'Премиум' if is_premium else 'Бесплатный'
@@ -39,5 +36,5 @@ async def show_balance(message: Message, **kwargs) -> None:
 
 
 @balance_router.callback_query(F.data == 'balance')
-async def balance_callback(callback: CallbackQuery) -> None:
-    await show_balance(callback.message)
+async def balance_callback(callback: CallbackQuery, user: User) -> None:
+    await show_balance(callback.message, user)
