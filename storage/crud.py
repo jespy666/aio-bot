@@ -6,12 +6,13 @@ from typing import Any
 from storage.models import User
 
 
-async def create_user(session: AsyncSession, name: str, pk: int) -> None:
+async def create_user(session: AsyncSession, name: str, pk: int) -> User:
     if not name:
         name = str(pk)
     user = User(id=pk, name=name)
     session.add(user)
     await session.commit()
+    return user
 
 
 async def get_user(session: AsyncSession, pk: int) -> User | None:
