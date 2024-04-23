@@ -2,5 +2,5 @@ class IncorrectModelError(Exception):
     pass
 
 
-class EmptyRequestsError(Exception):
+class InsufficientFundsError(Exception):
     pass
