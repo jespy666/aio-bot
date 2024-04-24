@@ -20,13 +20,13 @@ from ..wrappers import validators
 from config import config
 
 
-gpt_router = Router()
+gpt_text_router = Router()
 
 
-@gpt_router.message(Command('ask'))
+@gpt_text_router.message(Command('ask'))
 async def ask_model(message: Message, state: FSMContext, user: User) -> None:
     cancel_btn = CancelKB().place()
-    kb = DialogueKB(config.GPT_MODELS.keys()).place(
+    kb = DialogueKB(config.TEXT_MODELS.keys()).place(
         placeholder='Выберите модель данных'
     )
     user_id = user.id
@@ -49,7 +49,7 @@ async def ask_model(message: Message, state: FSMContext, user: User) -> None:
     await state.set_state(TextDialogueStates.choseModel)
 
 
-@gpt_router.message(TextDialogueStates.choseModel)
+@gpt_text_router.message(TextDialogueStates.choseModel)
 @validators
 async def chose_model(message: Message, state: FSMContext, user: User) -> None:
     model = message.text
@@ -63,7 +63,7 @@ async def chose_model(message: Message, state: FSMContext, user: User) -> None:
     await state.set_state(TextDialogueStates.supportDialogue)
 
 
-@gpt_router.message(TextDialogueStates.supportDialogue)
+@gpt_text_router.message(TextDialogueStates.supportDialogue)
 @validators
 async def support_dialogue(
         message: Message,
@@ -86,7 +86,7 @@ async def support_dialogue(
     await state.set_state(TextDialogueStates.supportDialogue)
 
 
-@gpt_router.callback_query(F.data == 'cancel')
+@gpt_text_router.callback_query(F.data == 'cancel')
 async def cancel_callback(
         callback: CallbackQuery,
         state: FSMContext,
@@ -111,7 +111,7 @@ async def cancel_callback(
     await state.clear()
 
 
-@gpt_router.callback_query(F.data == 'ask')
+@gpt_text_router.callback_query(F.data == 'ask')
 async def ask_callback(
         callback: CallbackQuery,
         state: FSMContext,
