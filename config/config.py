@@ -1,7 +1,11 @@
-from dotenv import load_dotenv
+from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+
 load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # db settings
 match os.getenv('DATABASE'):
@@ -16,7 +20,6 @@ WEBHOOK_URL = os.getenv('WEBHOOK_URL')
 WEBHOOK_PATH = os.getenv('WEBHOOK_PATH')
 
 # OpenAI related settings
-IMAGE_MODEL = os.getenv('IMAGE_MODEL')
 OPENAI_KEY = os.getenv('OPENAI_API_KEY')
 
 GPT_MODELS = {
@@ -25,5 +28,18 @@ GPT_MODELS = {
     'DALL-E 3': ('dall-e-3', 'image_requests'),
 }
 
+TEXT_MODELS = {
+    'GPT 3.5 Turbo': ('gpt-3.5-turbo', 'gpt3_requests'),
+    'GPT 4': ('gpt-4', 'gpt4_requests'),
+}
+
+IMAGE_MODELS = {
+    'DALL-E 3': ('dall-e-3', 'image_requests'),
+}
+
+IMAGE_SIZES = {
+    'DALL-E 3': ["1024x1024", "1792x1024", "1024x1792"],
+    'DALL-E 2': ["256x256", "512x512", "1024x1024", "1792x1024", "1024x1792"]
+}
 DEFAULT_GPT_MODEL = 'GPT 3.5 Turbo'
 
