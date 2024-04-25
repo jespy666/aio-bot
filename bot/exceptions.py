@@ -4,3 +4,11 @@ class IncorrectModelError(Exception):
 
 class InsufficientFundsError(Exception):
     pass
+
+
+class EmptyDocumentError(Exception):
+    pass
+
+
+class IncorrectImageSizeError(Exception):
+    pass
