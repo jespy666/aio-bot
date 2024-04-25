@@ -5,7 +5,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
-from ai.image import ImageDialogue
+from ai.image import ImageGenerator
 
 from ..states import ImageDialogueStates
 from ..keyboards import CancelKB, DialogueKB
@@ -119,7 +119,7 @@ async def generate_image(
     size = context.get('size')
     quality = context.get('quality')
     client = OpenAI(api_key=config.OPENAI_KEY)
-    dialogue = ImageDialogue(client, user, model)
+    dialogue = ImageGenerator(client, user, model)
     image_url = await dialogue.generate_image(prompt, size, quality)
     await message.answer_photo(image_url, caption=prompt)
     await state.clear()

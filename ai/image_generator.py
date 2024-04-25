@@ -7,7 +7,7 @@ from .dialogue import DialogueBase
 from storage.models import User
 
 
-class ImageDialogue(DialogueBase):
+class ImageGenerator(DialogueBase):
 
     def __init__(self, client: OpenAI, user: User, model: str) -> None:
         super().__init__(client, user, model)
