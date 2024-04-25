@@ -26,6 +26,7 @@ GPT_MODELS = {
     'GPT 3.5 Turbo': ('gpt-3.5-turbo', 'gpt3_requests'),
     'GPT 4': ('gpt-4', 'gpt4_requests'),
     'DALL-E 3': ('dall-e-3', 'image_requests'),
+    'DALL-E 2': ('dall-e-2', 'image_requests'),
 }
 
 TEXT_MODELS = {
@@ -35,11 +36,14 @@ TEXT_MODELS = {
 
 IMAGE_MODELS = {
     'DALL-E 3': ('dall-e-3', 'image_requests'),
+    'DALL-E 2': ('dall-e-2', 'image_requests'),
 }
 
 IMAGE_SIZES = {
     'DALL-E 3': ["1024x1024", "1792x1024", "1024x1792"],
-    'DALL-E 2': ["256x256", "512x512", "1024x1024", "1792x1024", "1024x1792"]
+    'DALL-E 2': ["256x256", "512x512", "1024x1024"],
 }
+
 DEFAULT_GPT_MODEL = 'GPT 3.5 Turbo'
 
+DEFAULT_IMG_MODEL = 'DALL-E 2'
