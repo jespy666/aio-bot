@@ -5,9 +5,9 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
-from ai.image import ImageGenerator
+from ai.image_generator import ImageGenerator
 
-from ..states import ImageDialogueStates
+from ..states import ImgGenStates
 from ..keyboards import CancelKB, DialogueKB
 from ..wrappers import validators
 
@@ -16,10 +16,10 @@ from storage.models import User
 from config import config
 
 
-gpt_image_router = Router()
+gpt_img_gen_router = Router()
 
 
-@gpt_image_router.message(Command('generate'))
+@gpt_img_gen_router.message(Command('generate'))
 async def ask_model(message: Message, state: FSMContext, user: User) -> None:
     cancel_btn = CancelKB().place()
     kb = DialogueKB(config.IMAGE_MODELS.keys()).place(
@@ -42,10 +42,10 @@ async def ask_model(message: Message, state: FSMContext, user: User) -> None:
 
     await message.answer(msg, reply_markup=cancel_btn)
     await message.answer(msg2, reply_markup=kb)
-    await state.set_state(ImageDialogueStates.model)
+    await state.set_state(ImgGenStates.model)
 
 
-@gpt_image_router.message(ImageDialogueStates.model)
+@gpt_img_gen_router.message(ImgGenStates.model)
 @validators
 async def ask_size(message: Message, state: FSMContext) -> None:
     model = message.text
@@ -64,10 +64,10 @@ async def ask_size(message: Message, state: FSMContext) -> None:
     await message.answer(msg, reply_markup=cancel_btn)
     await message.answer(msg2, reply_markup=kb)
     await state.update_data(sizes_kb=kb, model=model)
-    await state.set_state(ImageDialogueStates.size)
+    await state.set_state(ImgGenStates.size)
 
 
-@gpt_image_router.message(ImageDialogueStates.size)
+@gpt_img_gen_router.message(ImgGenStates.size)
 @validators
 async def ask_quality(message: Message, state: FSMContext) -> None:
     size = message.text
@@ -86,10 +86,10 @@ async def ask_quality(message: Message, state: FSMContext) -> None:
     await message.answer(msg, reply_markup=cancel_btn)
     await message.answer(msg2, reply_markup=kb)
     await state.update_data(quality_kb=kb, size=size)
-    await state.set_state(ImageDialogueStates.quality)
+    await state.set_state(ImgGenStates.quality)
 
 
-@gpt_image_router.message(ImageDialogueStates.quality)
+@gpt_img_gen_router.message(ImgGenStates.quality)
 @validators
 async def ask_prompt(message: Message, state: FSMContext) -> None:
     quality = message.text
@@ -102,10 +102,10 @@ async def ask_prompt(message: Message, state: FSMContext) -> None:
     )
     await message.answer(msg, reply_markup=cancel_btn)
     await state.update_data(quality=quality)
-    await state.set_state(ImageDialogueStates.prompt)
+    await state.set_state(ImgGenStates.prompt)
 
 
-@gpt_image_router.message(ImageDialogueStates.prompt)
+@gpt_img_gen_router.message(ImgGenStates.prompt)
 @validators
 async def generate_image(
         message: Message,
@@ -125,7 +125,7 @@ async def generate_image(
     await state.clear()
 
 
-@gpt_image_router.callback_query(F.data == 'generate')
+@gpt_img_gen_router.callback_query(F.data == 'generate')
 async def generate_callback(
         callback: CallbackQuery,
         state: FSMContext,

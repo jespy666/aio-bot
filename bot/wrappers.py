@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from bot import exceptions as e
 from bot.keyboards import InlineMenu
 
-from .states import TextDialogueStates
+from .states import TextStates
 
 
 def validators(func):
@@ -27,7 +27,7 @@ def validators(func):
             )
             await message.answer(msg, reply_markup=cancel_btn)
             await message.answer(msg2, reply_markup=models_kb)
-            await state.set_state(TextDialogueStates.choseModel)
+            await state.set_state(TextStates.choseModel)
         except e.InsufficientFundsError:
             menu = InlineMenu().place(
                 **{

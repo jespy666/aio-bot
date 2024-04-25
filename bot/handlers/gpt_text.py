@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot import TextDialogueStates
+from ..states import TextStates
 from bot.keyboards import CancelKB, InlineMenu, DialogueKB
 
 from ai.text import TextDialogue
@@ -46,10 +46,10 @@ async def ask_model(message: Message, state: FSMContext, user: User) -> None:
 
     await message.answer(msg, reply_markup=cancel_btn)
     await message.answer(msg2, reply_markup=kb)
-    await state.set_state(TextDialogueStates.choseModel)
+    await state.set_state(TextStates.choseModel)
 
 
-@gpt_text_router.message(TextDialogueStates.choseModel)
+@gpt_text_router.message(TextStates.choseModel)
 @validators
 async def chose_model(message: Message, state: FSMContext, user: User) -> None:
     model = message.text
@@ -60,10 +60,10 @@ async def chose_model(message: Message, state: FSMContext, user: User) -> None:
     greeting = dialogue.get_greeting()
     await state.update_data(dialogue=dialogue)
     await message.answer(greeting, reply_markup=cancel_btn)
-    await state.set_state(TextDialogueStates.supportDialogue)
+    await state.set_state(TextStates.supportDialogue)
 
 
-@gpt_text_router.message(TextDialogueStates.supportDialogue)
+@gpt_text_router.message(TextStates.supportDialogue)
 @validators
 async def support_dialogue(
         message: Message,
@@ -83,7 +83,7 @@ async def support_dialogue(
     await crud.update_user(session, user_id, **{field_name: requests})
     await message.answer(answer, reply_markup=cancel_btn)
     await state.update_data(dialogue=dialogue)
-    await state.set_state(TextDialogueStates.supportDialogue)
+    await state.set_state(TextStates.supportDialogue)
 
 
 @gpt_text_router.callback_query(F.data == 'cancel')
