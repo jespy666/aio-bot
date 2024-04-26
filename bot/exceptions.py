@@ -6,9 +6,17 @@ class InsufficientFundsError(Exception):
     pass
 
 
-class EmptyDocumentError(Exception):
+class IncorrectImageSizeError(Exception):
     pass
 
 
-class IncorrectImageSizeError(Exception):
+class IncorrectImageFormatError(Exception):
+    pass
+
+
+class AspectRatioMismatchError(Exception):
+    pass
+
+
+class UnknownQualityError(Exception):
     pass
