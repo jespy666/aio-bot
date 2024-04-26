@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..states import TextStates
 from bot.keyboards import CancelKB, InlineMenu, DialogueKB
 
-from ai.text import TextDialogue
+from ai.text_chat import TextDialogue
 
 from storage.models import User
 from storage import crud
@@ -25,7 +25,10 @@ gpt_text_router = Router()
 
 @gpt_text_router.message(Command('ask'))
 async def ask_model(message: Message, state: FSMContext, user: User) -> None:
-    cancel_btn = CancelKB().place()
+    cancel_btn = CancelKB(
+        text='Завершить диалог',
+        callback_data='interrupt_dialogue'
+    ).place()
     kb = DialogueKB(config.TEXT_MODELS.keys()).place(
         placeholder='Выберите модель данных'
     )

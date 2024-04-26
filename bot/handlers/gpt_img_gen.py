@@ -10,6 +10,7 @@ from ai.image_generator import ImageGenerator
 from ..states import ImgGenStates
 from ..keyboards import CancelKB, DialogueKB
 from ..wrappers import validators
+from ..validators import validate_size, validate_quality
 
 from storage.models import User
 
@@ -71,10 +72,13 @@ async def ask_size(message: Message, state: FSMContext) -> None:
 @validators
 async def ask_quality(message: Message, state: FSMContext) -> None:
     size = message.text
+    context = await state.get_data()
+    model = context.get('model')
+    validate_size(size, model)
     kb = DialogueKB(['standard', 'hd']).place(
         placeholder='Выберите качество изображения'
     )
-    context = await state.get_data()
+
     cancel_btn = context.get('cancel_btn')
     msg = (
         '<em>Выберите качество генерируемого изображения</em>'
@@ -92,7 +96,8 @@ async def ask_quality(message: Message, state: FSMContext) -> None:
 @gpt_img_gen_router.message(ImgGenStates.quality)
 @validators
 async def ask_prompt(message: Message, state: FSMContext) -> None:
-    quality = message.text
+    quality: str = message.text
+    validate_quality(quality)
     context = await state.get_data()
     cancel_btn = context.get('cancel_btn')
     msg = (

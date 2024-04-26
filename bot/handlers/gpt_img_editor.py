@@ -16,7 +16,7 @@ from ai.image_editor import ImageEditor
 from ..states import ImgEditStates
 from ..keyboards import CancelKB, DialogueKB
 from ..wrappers import validators
-from ..validators import validate_input_file, validate_size
+from ..validators import validate_size, validate_image, validate_input_file
 
 from storage.models import User
 
@@ -64,6 +64,7 @@ async def ask_erased(message: Message, state: FSMContext) -> None:
         file=original_png,
         destination=original_img_path
     )
+    validate_image(original_img_path)
     await state.update_data(
         temp_dir=temp_dir,
         original_img_path=original_img_path
@@ -92,6 +93,7 @@ async def ask_size(message: Message, state: FSMContext) -> None:
     temp_dir: TemporaryDirectory = context.get('temp_dir')
     erased_img_path: str = os.path.join(temp_dir.name, 'erased.png')
     await message.bot.download(file=erased_png, destination=erased_img_path)
+    validate_image(erased_img_path)
     await state.update_data(sizes_kb=kb, erased_img_path=erased_img_path)
     msg = (
         '<em><strong>Выберите размер изображения</strong></em>'
@@ -105,6 +107,7 @@ async def ask_size(message: Message, state: FSMContext) -> None:
 
 
 @gpt_img_edit_router.message(ImgEditStates.size)
+@validators
 async def ask_prompt(message: Message, state: FSMContext) -> None:
     context = await state.get_data()
     cancel_btn: InlineKeyboardMarkup = context.get('cancel_btn')
