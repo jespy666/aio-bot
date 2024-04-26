@@ -18,7 +18,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from storage.models.base import Base
+from storage.models.base import Base # noqa: E402
 
 target_metadata = Base.metadata
 

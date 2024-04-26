@@ -2,7 +2,6 @@ from aiogram.filters import Command
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import InlineMenu
 
