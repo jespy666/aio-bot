@@ -2,8 +2,8 @@ from aiogram.fsm.state import StatesGroup, State
 
 
 class TextStates(StatesGroup):
-    choseModel = State()
-    supportDialogue = State()
+    model = State()
+    dialogue = State()
 
 
 class ImgGenStates(StatesGroup):
