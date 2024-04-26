@@ -3,3 +3,6 @@ bot:
 
 migrate:
 		alembic upgrade head
+
+lint:
+		ruff check .
