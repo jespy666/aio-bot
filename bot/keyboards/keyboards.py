@@ -1,47 +1,33 @@
+from dataclasses import dataclass
+from typing import Dict, Union, Callable
+
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import (
+    KeyboardButton,
+    ReplyKeyboardMarkup,
+    InlineKeyboardMarkup
+)
 
 
-class InlineMenu:
+class InlineKeyboard:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.kb = InlineKeyboardBuilder()
 
-    def place(self, **kwargs):
-        for item, callback in kwargs.items():
-            self.kb.button(
-                text=item,
-                callback_data=callback,
-            )
+    def place(self, buttons: Dict[str: str]) -> InlineKeyboardMarkup:
+        for item, callback in buttons.items():
+            self.kb.button(text=item, callback_data=callback)
         self.kb.adjust(2)
         return self.kb.as_markup()
 
 
-class DialogueKB:
-
-    def __init__(self, buttons: list):
-        self.buttons = [[KeyboardButton(text=button) for button in buttons]]
-
-    def place(self, placeholder=None) -> ReplyKeyboardMarkup:
+class ReplyKeyboard:
+    @staticmethod
+    def place(buttons: list, placeholder=None) -> ReplyKeyboardMarkup:
         return ReplyKeyboardMarkup(
-            keyboard=self.buttons,
+            keyboard=[[KeyboardButton(text=button) for button in buttons]],
             is_persistent=False,
             one_time_keyboard=True,
             resize_keyboard=True,
             input_field_placeholder=placeholder,
         )
-
-
-class CancelKB:
-
-    def __init__(self):
-        self.kb = InlineKeyboardBuilder()
-        self.cancel_button = InlineKeyboardButton(
-            text='Завершить общение',
-            callback_data='cancel',
-        )
-
-    def place(self):
-        self.kb.add(self.cancel_button)
-        self.kb.adjust(1)
-        return self.kb.as_markup()
