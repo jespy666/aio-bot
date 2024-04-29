@@ -2,7 +2,7 @@ from aiogram.filters import Command
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 
-from bot.keyboards import InlineMenu
+from ..keyboards import InlineKeyboard
 
 
 about_router = Router()
@@ -10,15 +10,19 @@ about_router = Router()
 
 @about_router.message(Command('about'))
 async def about(message: Message) -> None:
-    menu = InlineMenu()
+    menu = InlineKeyboard().place(
+        {
+            'Посмотреть баланс': 'balance',
+            'Начать диалог (GPT)': 'ask',
+            'Создать изображение': 'generate',
+            'Изменить изображение': 'edit',
+            'Главная': 'start',
+        }
+    )
     msg = (
         'Здесь будет описание бота!'
     )
-    menu_items = {
-        'Главная': 'start',
-        'Начать диалог': 'ask',
-    }
-    await message.answer(msg, reply_markup=menu.place(**menu_items))
+    await message.answer(msg, reply_markup=menu)
 
 
 @about_router.callback_query(F.data == 'about')

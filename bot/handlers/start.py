@@ -2,7 +2,7 @@ from aiogram.filters import Command
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 
-from bot.keyboards import InlineMenu
+from ..keyboards import InlineKeyboard
 
 from storage.models import User
 
@@ -12,18 +12,21 @@ start_router = Router()
 
 @start_router.message(Command('start'))
 async def start(message: Message, user: User):
-    menu = InlineMenu()
-    items = {
-        'О боте': 'about',
-        'Начать диалог': 'ask',
-        'Посмотреть баланс': 'balance',
-    }
+    menu = InlineKeyboard().place(
+        {
+            'Как пользоваться?': 'about',
+            'Посмотреть баланс': 'balance',
+            'Начать диалог (GPT)': 'ask',
+            'Создать изображение': 'generate',
+            'Изменить изображение': 'edit',
+        }
+    )
     await message.answer(
         f'Привет, {user.name},\n\n'
         f'Меня зовут Aio,\n'
         f'Я могу быть полезен как AI ассистент!\n\n'
         f'🔽 Выбери опцию использования 🔽',
-        reply_markup=menu.place(**items),
+        reply_markup=menu,
     )
 
 

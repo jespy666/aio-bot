@@ -3,22 +3,27 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 
 
-from bot.keyboards import InlineMenu
+from ..keyboards import InlineKeyboard
 
 from storage.models import User
 
 balance_router = Router()
 
-ITEMS = {
-    'Главная': 'start',
-    'Начать диалог': 'ask',
-    'О боте': 'about',
-}
-
 
 @balance_router.message(Command('balance'))
 async def show_balance(message: Message, user: User) -> None:
-    menu = InlineMenu().place(**ITEMS)
+    menu = InlineKeyboard().place(
+        {
+            'Главная': 'start',
+            'Как пользоваться?': 'about',
+            'Создать изображение': 'generate',
+            'Изменить изображение': 'edit',
+            'Начать диалог (GPT)': 'ask',
+            'Пополнить баланс': 'payment',
+            'Посмотреть цены': 'price',
+
+        }
+    )
     is_premium = user.pre_subscription
     status = 'Премиум' if is_premium else 'Бесплатный'
     limit = 100 if is_premium else 50
