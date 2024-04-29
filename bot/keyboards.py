@@ -1,7 +1,4 @@
-from dataclasses import dataclass
-from typing import Dict, Union, Callable
-
-from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import (
     KeyboardButton,
     ReplyKeyboardMarkup,
@@ -14,7 +11,7 @@ class InlineKeyboard:
     def __init__(self) -> None:
         self.kb = InlineKeyboardBuilder()
 
-    def place(self, buttons: Dict[str: str]) -> InlineKeyboardMarkup:
+    def place(self, buttons: dict) -> InlineKeyboardMarkup:
         for item, callback in buttons.items():
             self.kb.button(text=item, callback_data=callback)
         self.kb.adjust(2)

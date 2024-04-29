@@ -1,10 +1,10 @@
 from functools import wraps
 
-from aiogram.types import Message
+from aiogram.types import Message, InlineKeyboardMarkup
 from aiogram.fsm.context import FSMContext
 
 from bot import exceptions as e
-from bot.keyboards import InlineMenu
+from .keyboards import InlineKeyboard
 
 from .states import TextStates, ImgEditStates, ImgGenStates
 
@@ -13,7 +13,7 @@ def validators(func):
     @wraps(func)
     async def wrapper(message: Message, state: FSMContext, *args, **kwargs):
         context = await state.get_data()
-        cancel_btn = context.get('cancel_btn')
+        cancel_btn: InlineKeyboardMarkup = context.get('cancel_btn')
         try:
             return await func(message, state, *args, **kwargs)
         except e.IncorrectModelError:
@@ -27,10 +27,10 @@ def validators(func):
             )
             await message.answer(msg, reply_markup=cancel_btn)
             await message.answer(msg2, reply_markup=models_kb)
-            await state.set_state(TextStates.choseModel)
+            await state.set_state(TextStates.model)
         except e.InsufficientFundsError:
-            menu = InlineMenu().place(
-                **{
+            menu = InlineKeyboard().place(
+                {
                     'Докупить запросы': 'buy',
                     'На главную': 'start',
                     'Начать новый диалог': 'ask',
