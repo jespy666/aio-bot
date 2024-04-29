@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..states import TextStates
-from bot.keyboards import CancelKB, InlineMenu, DialogueKB
+from ..keyboards import ReplyKeyboard, InlineKeyboard
 
 from ai.text_chat import TextDialogue
 
@@ -20,16 +20,16 @@ from ..wrappers import validators
 from config import config
 
 
-gpt_text_router = Router()
+gpt_chat_router = Router()
 
 
-@gpt_text_router.message(Command('ask'))
+@gpt_chat_router.message(Command('ask'))
 async def ask_model(message: Message, state: FSMContext, user: User) -> None:
-    cancel_btn = CancelKB(
-        text='Завершить диалог',
-        callback_data='interrupt_dialogue'
-    ).place()
-    kb = DialogueKB(config.TEXT_MODELS.keys()).place(
+    cancel_btn = InlineKeyboard().place(
+        {'Завершить диалог': 'interrupt_dialogue'}
+    )
+    kb = ReplyKeyboard().place(
+        config.TEXT_MODELS.keys(),
         placeholder='Выберите модель данных'
     )
     user_id = user.id
@@ -52,7 +52,7 @@ async def ask_model(message: Message, state: FSMContext, user: User) -> None:
     await state.set_state(TextStates.model)
 
 
-@gpt_text_router.message(TextStates.model)
+@gpt_chat_router.message(TextStates.model)
 @validators
 async def chose_model(message: Message, state: FSMContext, user: User) -> None:
     model = message.text
@@ -66,7 +66,7 @@ async def chose_model(message: Message, state: FSMContext, user: User) -> None:
     await state.set_state(TextStates.dialogue)
 
 
-@gpt_text_router.message(TextStates.dialogue)
+@gpt_chat_router.message(TextStates.dialogue)
 @validators
 async def support_dialogue(
         message: Message,
@@ -89,7 +89,7 @@ async def support_dialogue(
     await state.set_state(TextStates.dialogue)
 
 
-@gpt_text_router.callback_query(F.data == 'cancel')
+@gpt_chat_router.callback_query(F.data == 'interrupt_dialogue')
 async def cancel_callback(
         callback: CallbackQuery,
         state: FSMContext,
@@ -98,11 +98,11 @@ async def cancel_callback(
 ) -> None:
 
     items = {
-        'О боте': 'about',
-        'Главная': 'start',
+        'Как пользоваться?': 'about',
         'Начать новый диалог': 'ask',
+        'Главная': 'start',
     }
-    menu = InlineMenu().place(**items)
+    menu = InlineKeyboard().place(items)
     context = await state.get_data()
     dialogue: TextDialogue | None = context.get('dialogue')
     if not dialogue:
@@ -114,7 +114,7 @@ async def cancel_callback(
     await state.clear()
 
 
-@gpt_text_router.callback_query(F.data == 'ask')
+@gpt_chat_router.callback_query(F.data == 'ask')
 async def ask_callback(
         callback: CallbackQuery,
         state: FSMContext,

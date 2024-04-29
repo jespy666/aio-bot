@@ -14,7 +14,7 @@ from aiogram.utils.keyboard import InlineKeyboardMarkup
 from ai.image_editor import ImageEditor
 
 from ..states import ImgEditStates
-from ..keyboards import CancelKB, DialogueKB
+from ..keyboards import InlineKeyboard, ReplyKeyboard
 from ..wrappers import validators
 from ..validators import validate_size, validate_image, validate_input_file
 
@@ -35,7 +35,9 @@ async def ask_original(
         user: User
 ) -> None:
 
-    cancel_btn: InlineKeyboardMarkup = CancelKB().place()
+    cancel_btn: InlineKeyboardMarkup = InlineKeyboard().place(
+        {'Отменить генерацию': 'interrupt_img_edit'}
+    )
     user_id: int = user.id
     await state.update_data(
         user_id=user_id,
@@ -85,7 +87,8 @@ async def ask_erased(message: Message, state: FSMContext) -> None:
 async def ask_size(message: Message, state: FSMContext) -> None:
     context = await state.get_data()
     cancel_btn: InlineKeyboardMarkup = context.get('cancel_btn')
-    kb = DialogueKB(config.IMAGE_SIZES[MODEL]).place(
+    kb = ReplyKeyboard().place(
+        config.IMAGE_SIZES[MODEL],
         placeholder='Выберите размер изображения'
     )
     erased_png: Document = message.document
@@ -147,3 +150,21 @@ async def edit_callback(
 ) -> None:
 
     await ask_original(callback.message, state, user)
+
+
+@gpt_img_edit_router.callback_query(F.data == 'interrupt_img_edit')
+async def cancel_callback(callback: CallbackQuery, state: FSMContext) -> None:
+    msg = (
+        '<em><strong>Изменение изображения прервано</strong>\n\n'
+        'Вы всегда можете ознакомиться с инструкцией по использованию: '
+        '/about</em>'
+    )
+    menu = InlineKeyboard().place(
+        {
+            'Главная': 'start',
+            'Как пользоваться?': 'about',
+            'Начать изменение заново': 'edit',
+        }
+    )
+    await state.clear()
+    await callback.message.answer(msg, reply_markup=menu)

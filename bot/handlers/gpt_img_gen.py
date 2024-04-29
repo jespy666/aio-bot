@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from ai.image_generator import ImageGenerator
 
 from ..states import ImgGenStates
-from ..keyboards import CancelKB, DialogueKB
+from ..keyboards import InlineKeyboard, ReplyKeyboard
 from ..wrappers import validators
 from ..validators import validate_size, validate_quality
 
@@ -22,8 +22,11 @@ gpt_img_gen_router = Router()
 
 @gpt_img_gen_router.message(Command('generate'))
 async def ask_model(message: Message, state: FSMContext, user: User) -> None:
-    cancel_btn = CancelKB().place()
-    kb = DialogueKB(config.IMAGE_MODELS.keys()).place(
+    cancel_btn = InlineKeyboard().place(
+        {'Отменить генерацию': 'interrupt_creation'}
+    )
+    kb = ReplyKeyboard().place(
+        config.IMAGE_MODELS.keys(),
         placeholder='Выберите модель данных'
     )
     user_id = user.id
@@ -50,7 +53,8 @@ async def ask_model(message: Message, state: FSMContext, user: User) -> None:
 @validators
 async def ask_size(message: Message, state: FSMContext) -> None:
     model = message.text
-    kb = DialogueKB(config.IMAGE_SIZES[model]).place(
+    kb = ReplyKeyboard().place(
+        config.IMAGE_SIZES[model],
         placeholder='Выберите размер изображения'
     )
     context = await state.get_data()
@@ -75,7 +79,8 @@ async def ask_quality(message: Message, state: FSMContext) -> None:
     context = await state.get_data()
     model = context.get('model')
     validate_size(size, model)
-    kb = DialogueKB(['standard', 'hd']).place(
+    kb = ReplyKeyboard().place(
+        ['standard', 'hd'],
         placeholder='Выберите качество изображения'
     )
 
@@ -138,3 +143,21 @@ async def generate_callback(
 ) -> None:
 
     await ask_model(callback.message, state, user)
+
+
+@gpt_img_gen_router.callback_query(F.data == 'interrupt_creation')
+async def cancel_callback(callback: CallbackQuery, state: FSMContext) -> None:
+    msg = (
+        '<em><strong>Создание изображения прервано</strong>\n\n'
+        'Вы всегда можете ознакомиться с инструкцией по использованию: '
+        '/about</em>'
+    )
+    menu = InlineKeyboard().place(
+        {
+            'Главная': 'start',
+            'Как пользоваться?': 'about',
+            'Начать создание заново': 'generate',
+        }
+    )
+    await callback.message.answer(msg, reply_markup=menu)
+    await state.clear()
