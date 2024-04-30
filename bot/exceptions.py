@@ -20,3 +20,7 @@ class AspectRatioMismatchError(Exception):
 
 class UnknownQualityError(Exception):
     pass
+
+
+class CurrencyLoadError(Exception):
+    pass
