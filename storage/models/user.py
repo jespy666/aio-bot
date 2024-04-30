@@ -1,4 +1,4 @@
-from sqlalchemy import String, Boolean, Integer
+from sqlalchemy import String, Float, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
@@ -7,17 +7,11 @@ from .base import Base
 class User(Base):
 
     name: Mapped[str] = mapped_column(String(32), unique=False)
-    pre_subscription: Mapped[bool] = mapped_column(
-        Boolean, unique=False, default=False
-    )
     gpt3_requests: Mapped[int] = mapped_column(
         Integer, unique=False, default=50
     )
-    gpt4_requests: Mapped[int] = mapped_column(
-        Integer, unique=False, default=0
-    )
-    image_requests: Mapped[int] = mapped_column(
-        Integer, unique=False, default=0
+    balance: Mapped[float] = mapped_column(
+        Float, unique=False, default=0.00
     )
 
     def __str__(self):
