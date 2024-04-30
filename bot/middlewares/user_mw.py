@@ -25,6 +25,9 @@ class UserMiddleware(BaseMiddleware):
                 if event.callback_query:
                     user_id = event.callback_query.from_user.id
                     first_name = event.callback_query.from_user.first_name
+                elif event.pre_checkout_query:
+                    user_id = event.pre_checkout_query.from_user.id
+                    first_name = event.pre_checkout_query.from_user.first_name
                 else:
                     user_id = event.message.chat.id
                     first_name = event.message.chat.first_name

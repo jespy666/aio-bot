@@ -47,3 +47,34 @@ IMAGE_SIZES = {
 DEFAULT_GPT_MODEL = 'GPT 3.5 Turbo'
 
 DEFAULT_IMG_MODEL = 'DALL-E 2'
+
+# payment related settings
+PAYMENT_PROVIDER_TOKEN = os.getenv('PAYMENT_PROVIDER_TOKEN')
+
+PAYMENT_OPTIONS = {
+    'pay_100': {
+        'amount': (10000, '100'),
+        'img_url': 'https://i.ibb.co.com/44LXK41/100.png',
+    },
+    'pay_200': {
+        'amount': (20000, '200'),
+        'img_url': 'https://i.ibb.co.com/YfKcyms/200.png',
+    },
+    'pay_300': {
+        'amount': (30000, '300'),
+        'img_url': 'https://i.ibb.co.com/jhknRSk/300.png',
+    },
+    'pay_500': {
+        'amount': (50000, '500'),
+        'img_url': 'https://i.ibb.co.com/zQrr4D8/500.png',
+    },
+    'pay_1000': {
+        'amount': (100000, '1000'),
+        'img_url': 'https://i.ibb.co.com/r7JWbGQ/1000.png',
+    },
+}
+
+# currency parser related settings
+PARSED_URL = 'https://quote.rbc.ru/ticker/59111'
+PARSED_NAME = 'span'
+PARSED_CLASS = 'chart__info__sum'

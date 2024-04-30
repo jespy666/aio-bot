@@ -6,6 +6,7 @@ from .gpt_chat import gpt_chat_router
 from .gpt_img_gen import gpt_img_gen_router
 from .gpt_img_editor import gpt_img_edit_router
 from .balance import balance_router
+from .payment import payment_router
 
 from storage.session import session_factory
 
@@ -20,6 +21,7 @@ def register_routes(dp: Dispatcher) -> None:
     dp.include_router(gpt_img_gen_router)
     dp.include_router(gpt_img_edit_router)
     dp.include_router(balance_router)
+    dp.include_router(payment_router)
 
 
 def register_middlewares(dp: Dispatcher) -> None:
